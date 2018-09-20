@@ -1,0 +1,35 @@
+
+//flights:
+//payload map {
+//	flight: $$,
+//	'flight$$': $
+//}
+//flights : 
+//	payload.ns0#listAllFlightsResponse.*return map {
+//		flight: {
+//			price: $.price,
+//			dest:$.destination
+//		}
+//}
+//flights:
+//payload.ns0#listAllFlightsResponse.*return map {
+//		price: $.price as :number {class: "java.lang.Double"},
+//		price2: $.price as :number as :string {format: "###.00"},
+//		destination: $.destination,
+//		origin: $.origin,
+//		plane:upper $.planeType,
+//		departurDate: $.departureDate as :date {format: "yyyy/MM/dd"} as :string {format: "MMM dd, yyyy"}
+//} 
+//flights: payload.ns0#listAllFlightsResponse.*return map {
+//	price: $.price as :number {class: "java.lang.Double"},
+//	price2: $.price as :number as :string {format: "###.00"},
+//	destination: $.destination,
+//	origin: $.origin,
+//	plane: upper $.planeType replace /(BOING)/ with "BOEING",
+//	departurDate: $.departureDate as :date {format: "yyyy/MM/dd"} as :string {format: "MMM dd, yyyy"},
+//	seats:$.emptySeats as :number
+//} orderBy $.departureDate orderBy $.price distinctBy $
+//filter ($.seats != 0)
+//distinctBy $.destination
+//orderBy $.departureDate orderBy $.price
+
