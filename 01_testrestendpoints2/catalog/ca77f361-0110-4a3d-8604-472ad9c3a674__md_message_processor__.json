@@ -1,0 +1,16 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "AmericanFlightsResponseJson"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "FlightPOJO"
+        }
+    },
+    "id": "ca77f361-0110-4a3d-8604-472ad9c3a674",
+    "version": "5.2.0.0"
+}

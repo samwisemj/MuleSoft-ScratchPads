@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cluster="http://www.mulesoft.org/schema/mule/ee/cluster" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ws="http://www.mulesoft.org/schema/mule/ws"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<context:property-placeholder location="flights-${env}.properties" />
+	<ws:consumer-config name="Web_Service_Consumer_Delta_Global_Copy"
+		wsdlLocation="http://mu.mulesoft-training.com/essentials/delta?wsdl"
+		service="TicketServiceService" port="TicketServicePort"
+		serviceAddress="http://mule-worker-training-u.cloudhub.io:8081/essentials/delta"
+		doc:name="Web Service Consumer" />
+		
+		
+    <configuration defaultExceptionStrategy-ref="testrestendpointsChoice_Exception_Strategy" doc:name="Configuration">
+        <expression-language>
+        	<global-functions>
+        		def getNumSeats(type){
+        		if(type.contains('737')){
+        			return 150
+        		}else 
+        			return 300
+        		}
+        	</global-functions>
+        </expression-language>
+    </configuration>
+    
+    
+    
+	<choice-exception-strategy name= "testrestendpointsChoice_Exception_Strategy" >
+		<catch-exception-strategy doc:name="NoFlights DataWeave Exception"
+			when="#[exception.causeMatches('com.mulesoft.weave.*')||exception.message=='Payload is empty.']">
+			<set-payload value="No flights to #[flowVars.code +'\n'+exception]"
+				doc:name="Set Payload" />
+			<set-property propertyName="http.status" value="400"
+				doc:name="Property" />
+			<logger level="INFO" doc:name="Logger" />
+		</catch-exception-strategy>
+		<catch-exception-strategy doc:name="Data Unavailable and all other Exception">
+			<set-payload value="Data is unavailabe.TRY LATER.#['\n'+exception] "
+				doc:name="Set Payload" />
+			<set-property propertyName="http.status" value="500"
+				doc:name="Property" />
+			<logger level="INFO" doc:name="Logger" />
+		</catch-exception-strategy>
+	</choice-exception-strategy>
+</mule>

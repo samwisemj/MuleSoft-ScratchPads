@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="getUnitedFlightsFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration_GLOBAL" path="/united" allowedMethods="GET" doc:name="HTTP"/>
+        <http:request config-ref="United_HTTP_Request_Configuration_GLOBAL" path="/api/flights" method="GET" doc:name="UnitedRestRequest"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="d11d7df0-f7e3-4257-9f55-353651a229aa">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload.flights map ((flight , indexOfFlight) -> {
+	airline: flight.airlineName,
+	flightCode: flight.code,
+	fromAirportCode: flight.origin,
+	toAirportCode: flight.destination,
+	departureDate: flight.departureDate,
+	emptySeats: flight.emptySeats,
+	price: flight.price,
+	planeType: flight.planeType
+})]]></dw:set-payload>
+        </dw:transform-message>
+        <logger level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="dummyFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration_GLOBAL" path="/hello" doc:name="HTTP"/>
+        <set-payload value="{
+    &quot;flights&quot;: [
+        {
+            &quot;code&quot;: &quot;ER38sd&quot;,
+            &quot;price&quot;: 400,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;SFO&quot;,
+            &quot;departureDate&quot;: &quot;2015/03/20&quot;,
+            &quot;planeType&quot;: &quot;Boeing 737&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 0
+        },
+        {
+            &quot;code&quot;: &quot;ER45if&quot;,
+            &quot;price&quot;: 345.99,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;LAX&quot;,
+            &quot;departureDate&quot;: &quot;2015/02/11&quot;,
+            &quot;planeType&quot;: &quot;Boeing 737&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 52
+        },
+        {
+            &quot;code&quot;: &quot;ER45jd&quot;,
+            &quot;price&quot;: 346,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;LAX&quot;,
+            &quot;departureDate&quot;: &quot;2015/04/11&quot;,
+            &quot;planeType&quot;: &quot;Boeing 777&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 12
+        },
+        {
+            &quot;code&quot;: &quot;ER0945&quot;,
+            &quot;price&quot;: 423,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;LAX&quot;,
+            &quot;departureDate&quot;: &quot;2015/06/11&quot;,
+            &quot;planeType&quot;: &quot;Boeing 707&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 0
+        },
+        {
+            &quot;code&quot;: &quot;ER9fje&quot;,
+            &quot;price&quot;: 845,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;CLE&quot;,
+            &quot;departureDate&quot;: &quot;2015/07/11&quot;,
+            &quot;planeType&quot;: &quot;Boeing 727&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 32
+        },
+        {
+            &quot;code&quot;: &quot;ER3kfd&quot;,
+            &quot;price&quot;: 245,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;CLE&quot;,
+            &quot;departureDate&quot;: &quot;2015/08/11&quot;,
+            &quot;planeType&quot;: &quot;Boeing 747&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 13
+        },
+        {
+            &quot;code&quot;: &quot;ER39rk&quot;,
+            &quot;price&quot;: 945,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;SFO&quot;,
+            &quot;departureDate&quot;: &quot;2015/09/11&quot;,
+            &quot;planeType&quot;: &quot;Boeing 757&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 54
+        },
+        {
+            &quot;code&quot;: &quot;ER39rj&quot;,
+            &quot;price&quot;: 954,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;SFO&quot;,
+            &quot;departureDate&quot;: &quot;2015/02/12&quot;,
+            &quot;planeType&quot;: &quot;Boeing 777&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 23
+        },
+        {
+            &quot;code&quot;: &quot;ER95jf&quot;,
+            &quot;price&quot;: 234,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;PDF&quot;,
+            &quot;departureDate&quot;: &quot;2015/02/12&quot;,
+            &quot;planeType&quot;: &quot;Boeing 787&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 23
+        },
+        {
+            &quot;code&quot;: &quot;ER49fd&quot;,
+            &quot;price&quot;: 853,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;PDX&quot;,
+            &quot;departureDate&quot;: &quot;2015/02/13&quot;,
+            &quot;planeType&quot;: &quot;Boeing 777&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 0
+        },
+        {
+            &quot;code&quot;: &quot;ER95jf&quot;,
+            &quot;price&quot;: 483,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;PDX&quot;,
+            &quot;departureDate&quot;: &quot;2015/02/20&quot;,
+            &quot;planeType&quot;: &quot;Boeing 777&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 95
+        },
+        {
+            &quot;code&quot;: &quot;ER04kf&quot;,
+            &quot;price&quot;: 532,
+            &quot;origin&quot;: &quot;MUA&quot;,
+            &quot;destination&quot;: &quot;PDX&quot;,
+            &quot;departureDate&quot;: &quot;2015/02/12&quot;,
+            &quot;planeType&quot;: &quot;Boeing 777&quot;,
+            &quot;airlineName&quot;: &quot;United&quot;,
+            &quot;emptySeats&quot;: 30
+        }
+    ]
+}" doc:name="Set Payload"/>
+        <dw:transform-message doc:name="Copy_of_Transform Message" metadata:id="d11d7df0-f7e3-4257-9f55-353651a229aa">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload.flights map ((flight , indexOfFlight) -> {
+	airline: flight.airlineName,
+	flightCode: flight.code,
+	fromAirportCode: flight.origin,
+	toAirportCode: flight.destination,
+	departureDate: flight.departureDate,
+	emptySeats: flight.emptySeats,
+	price: flight.price,
+	planeType: flight.planeType
+})]]></dw:set-payload>
+        </dw:transform-message>
+        <logger level="INFO" doc:name="Copy_of_Logger"/>
+    </flow>
+
+</mule>
